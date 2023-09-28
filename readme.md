@@ -55,3 +55,59 @@ Below is the respons from localhost:9200.
     "tagline" : "You Know, for Search"
     }
 ```
+
+## Embedded Document
+
+<table>
+<tr>
+<th>Elasticsearch.json</th>
+<th>Lucene.doc</th>
+</tr>
+
+<tr>
+<td>
+
+```json
+{
+    "_id": "12345",
+    "first_name" : "Eko",
+    "Last_name" :  "Khannedy",
+    "email": "eko@example.com",
+    "age": 25,
+    "hobbies": [
+        "Coding" ,
+        "Reading" ],
+    "addresses" : [
+        {
+            "street": "Jl. Belum Jadi",
+            "city": "Jakarta",
+            "country": "Indonesia"
+        },
+        {
+            "street": "Jalan Belakang",
+            "city": "Subang",
+            "country": "Indonesia"
+        }
+    ]
+}
+```
+</td>
+<td>
+
+```json
+{
+    "_id": ["12345"],
+    "first_name" : ["Eko"],
+    "Last_name" : ["Khannedy"],
+    "email": ["eko@example.com" ],
+    "age": [25],
+    "hobbies": ["Coding", "Reading"],
+    "addresses.street": ["Jl. Belum Jadi", "Jalan Belakang"],
+    "addresses.city" : ["Jakarta", "Subang"],
+    "addresses.country": ["Indonesia" ]
+}
+```
+
+</td>
+</tr>
+</table>
