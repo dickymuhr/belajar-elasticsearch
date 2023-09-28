@@ -105,7 +105,7 @@ We store data in JSON format, using either the reference or embedded approach. E
     "hobbies": ["Coding", "Reading"],
     "addresses.street": ["Jl. Belum Jadi", "Jalan Belakang"],
     "addresses.city" : ["Jakarta", "Subang"],
-    "addresses.country": ["Indonesia" ]
+    "addresses.country": ["Indonesia"]
 }
 ```
 
