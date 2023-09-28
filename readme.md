@@ -20,7 +20,7 @@ Download archive file from official website (for Linux), then extract
     tar -xzvf elasticsearch-8.10.2-linux-x86_64.tar.gz
 ```
 
-Open the extracted folder then configure config/elasticsearch.yml
+Open the extracted folder then configure `config/elasticsearch.yml`
 ```yml
     cluster.name: diccode-cluster
     node.name: diccode-1
@@ -35,7 +35,7 @@ ElasticSearch will run on port 9200.
 ```bash
     bin/elasticsearch
 ```
-Below is the respons from localhost:9200.
+Below is the respons from `localhost:9200`.
 ```JSON
     {
     "name" : "diccode-1",
@@ -57,11 +57,12 @@ Below is the respons from localhost:9200.
 ```
 
 ## Embedded Document
+We store data in JSON format, using either the reference or embedded approach. Elasticsearch automatically converts the JSON document structure into a Lucene document, formatted as a `Map<String, List<T>>`. Below is the example of Embedded Document.
 
 <table>
 <tr>
-<th>Elasticsearch.json</th>
-<th>Lucene.doc</th>
+<th>elasticsearch.json</th>
+<th>lucene.doc</th>
 </tr>
 
 <tr>
@@ -71,7 +72,7 @@ Below is the respons from localhost:9200.
 {
     "_id": "12345",
     "first_name" : "Eko",
-    "Last_name" :  "Khannedy",
+    "last_name" :  "Khannedy",
     "email": "eko@example.com",
     "age": 25,
     "hobbies": [
@@ -98,7 +99,7 @@ Below is the respons from localhost:9200.
 {
     "_id": ["12345"],
     "first_name" : ["Eko"],
-    "Last_name" : ["Khannedy"],
+    "last_name" : ["Khannedy"],
     "email": ["eko@example.com" ],
     "age": [25],
     "hobbies": ["Coding", "Reading"],
