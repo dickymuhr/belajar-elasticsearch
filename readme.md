@@ -57,7 +57,7 @@ Below is the respons from `localhost:9200`.
 ```
 
 ## Embedded Document
-We store data in JSON format, using either the reference or embedded approach. Elasticsearch automatically converts the JSON document structure into a Lucene document, formatted as a `Map<String, List<T>>`. Below is the example of Embedded Document.
+We store data in JSON format, using either the reference or embedded approach. Embedded document is where a document's field has nested document. Elasticsearch automatically converts the JSON document structure into a Lucene document, formatted as a `Map<String, List<T>>`. Below is the example of Embedded Document.
 
 <table>
 <tr>
