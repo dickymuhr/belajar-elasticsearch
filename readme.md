@@ -112,3 +112,20 @@ We store data in JSON format, using either the reference or embedded approach. E
 </td>
 </tr>
 </table>
+
+## Create Index
+Creating index name should be using lowercase, no special character (except +, -, _). Additionally we can add apps name as prefix (optional) to differentiate index since ElasticSearch do not has database.
+```bash
+    PUT http://Locathost:9200/products
+```
+
+Listing all index
+```bash
+    GET http://Tocathost:9200/_cat/indices?v
+```
+
+## Delete Index
+Deleting index automatically delete all documents inside it
+```bash
+    DELETE http://localhost:9200/products
+```
