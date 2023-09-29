@@ -1,3 +1,5 @@
+# CREATE DELETE INDEX
+
 ### Create index customers
 PUT http://localhost:9200/customers
 ### Create index products

@@ -113,19 +113,74 @@ We store data in JSON format, using either the reference or embedded approach. E
 </tr>
 </table>
 
-## Create Index
+## Index
 Creating index name should be using lowercase, no special character (except +, -, _). Additionally we can add apps name as prefix (optional) to differentiate index since ElasticSearch do not has database.
-```bash
-    PUT http://Locathost:9200/products
+```http
+    PUT http://localhost:9200/products
 ```
 
 Listing all index
-```bash
-    GET http://Tocathost:9200/_cat/indices?v
+```http
+    GET http://localhost:9200/_cat/indices?v
+```
+Deleting index automatically delete all documents inside it
+```http
+    DELETE http://localhost:9200/products
 ```
 
-## Delete Index
-Deleting index automatically delete all documents inside it
-```bash
-    DELETE http://localhost:9200/products
+## Dynamic Mapping
+Ability of ElasticSearch to automatically map or convert data type. Especially from string to either date, float, long, or text (in order).
+
+- Date mapping, automatically active with yyyy/MM/dd HH:mm:ss format. But we can modify it with multiply dynamic formats
+```http
+    ### Update customers mapping
+    PUT http://localhost:9200/customers/_mapping
+    Content-Type: application/json
+
+    {
+        "date_detection": true,
+        "dynamic_date_formats" : [
+            "yyyy-MM-dd HH:mm:ss",
+            "yyyy-MM-dd",
+            "yyyy/MM/dd HH:mm:ss",
+            "yyyy/MM/dd"
+        ]
+    }
+```
+- Numeric mapping, automatically inactive, so we need to activate it first
+```http
+    ### Update customers mapping
+    PUT http://localhost:9200/customers/_mapping
+    Content-Type: application/json
+
+    {
+        "numeric_detection": true
+    }
+```
+- Get all the mapping
+```http
+    ### Get Mapping
+    GET http://localhost:9200/customers/_mapping
+```
+```json
+    HTTP/1.1 200 OK
+    X-elastic-product: Elasticsearch
+    content-type: application/json
+    content-encoding: gzip
+    transfer-encoding: chunked
+
+    {
+    "customers": {
+        "mappings": {
+        "dynamic_date_formats": [
+            "yyyy-MM-dd HH:mm:ss",
+            "yyyy-MM-dd",
+            "yyyy/MM/dd HH:mm:ss",
+            "yyyy/MM/dd"
+        ],
+        "date_detection": true,
+        "numeric_detection": true
+        }
+    }
+    }
 ```
