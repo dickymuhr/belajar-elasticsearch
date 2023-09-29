@@ -159,7 +159,7 @@ Ability of ElasticSearch to automatically map or convert data type. Especially f
 ```
     GET http://localhost:9200/customers/_mapping
 ```
-```json
+```
     HTTP/1.1 200 OK
     X-elastic-product: Elasticsearch
     content-type: application/json
