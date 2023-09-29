@@ -115,16 +115,16 @@ We store data in JSON format, using either the reference or embedded approach. E
 
 ## Index
 Creating index name should be using lowercase, no special character (except +, -, _). Additionally we can add apps name as prefix (optional) to differentiate index since ElasticSearch do not has database.
-```
+```http
     PUT http://localhost:9200/products
 ```
 
 Listing all index
-```
+```http
     GET http://localhost:9200/_cat/indices?v
 ```
 Deleting index automatically delete all documents inside it
-```
+```http
     DELETE http://localhost:9200/products
 ```
 
@@ -132,8 +132,7 @@ Deleting index automatically delete all documents inside it
 Ability of ElasticSearch to automatically map or convert data type. Especially from string to either date, float, long, or text (in order).
 
 - Date mapping, automatically active with yyyy/MM/dd HH:mm:ss format. But we can modify it with multiply dynamic formats
-```
-    ### Update customers mapping
+```http
     PUT http://localhost:9200/customers/_mapping
     Content-Type: application/json
 
@@ -148,8 +147,7 @@ Ability of ElasticSearch to automatically map or convert data type. Especially f
     }
 ```
 - Numeric mapping, automatically inactive, so we need to activate it first
-```
-    ### Update customers mapping
+```http
     PUT http://localhost:9200/customers/_mapping
     Content-Type: application/json
 
@@ -158,8 +156,7 @@ Ability of ElasticSearch to automatically map or convert data type. Especially f
     }
 ```
 - Get all the mapping
-```
-    ### Get Mapping
+```http
     GET http://localhost:9200/customers/_mapping
 ```
 ```json
