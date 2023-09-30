@@ -1,0 +1,38 @@
+### Get customer khannedy
+GET http://localhost:9200/customers/_doc/khannedy
+
+### Get customer khannedy source
+GET http://localhost:9200/customers/_source/khannedy
+
+### Check exist
+HEAD http://localhost:9200/customers/_doc/khannedy
+
+# Multiget
+
+### Multiget products
+POST http://localhost:9200/products/_mget
+Content-Type: application/json
+
+{
+    "ids": [
+        "1",
+        "2"
+        ]
+}
+
+### Multiget orders and customers
+POST http://localhost:9200/_mget
+Content-Type: application/json
+
+{
+    "docs": [
+        {
+            "_id": "1",
+            "_index": "orders"
+        },
+        {
+            "_id": "khannedy",
+            "_index": "customers"
+        }
+    ]
+}

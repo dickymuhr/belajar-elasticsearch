@@ -1,0 +1,57 @@
+### Insert customer khannedy
+POST http://localhost:9200/customers/_create/khannedy
+Content-Type: application/json
+
+{
+    "name": "Eko Kurniawan Khannedy",
+    "register_at": "2023-01-01 00:00:00"
+}
+
+### Get Mapping
+GET http://localhost:9200/customers/_mapping
+
+### Insert products 1
+POST http://localhost:9200/products/_create/1
+Content-Type: application/json
+
+{
+"name" : "Indomie Ayam Bawang",
+"price" : "2000"
+}
+
+### Insert products 2
+POST http://localhost:9200/products/_create/2
+Content-Type: application/json
+
+{
+    "name" : "Mie Sedap Soto",
+    "price" : "2000"
+}
+
+### Get Mapping
+GET http://localhost:9200/products/_mapping
+
+### Insert orders 1
+POST http://localhost:9200/orders/_create/1
+Content-Type: application/json
+
+{
+    "order_date": "2023-01-01 00:00:00",
+    "customer_id": "khannedy",
+    "total": "8000",
+    "items": [
+        {
+            "product_id": "1",
+            "price": "2000",
+            "quantity": "2"
+        },
+        {
+            "product_id": "2",
+            "price": "2000",
+            "quantity": "2"
+        }
+    ]
+}
+
+### Get Mapping
+GET http://localhost:9200/orders/_mapping

@@ -181,3 +181,54 @@ Ability of ElasticSearch to automatically map or convert data type. Especially f
     }
     }
 ```
+
+## Create API
+Adding document to index with unique id
+```
+    POST http://localhost:9200/customers/_create/khannedy
+```
+Upon creating the initial document in an index, the schema is also defined. Therefore, adding subsequent documents with differing data types will result in an error.
+
+## Get API
+Retrieve document with specific id, with metadata
+```
+    GET http://localhost:9200/customers/_doc/khannedy
+```
+Get only source, without metadata
+```
+    GET http://localhost:9200/customers/_source/khannedy
+```
+Check if document exist, it will response status either `200 OK` or `404 Not Found` with empty body
+```
+    HEAD http://localhost:9200/customers/_doc/khannedy
+```
+Multiget, to retrieve several document at once either from same index or various index
+```
+    # Same index
+    POST http://localhost:9200/products/_mget
+    Content-Type: application/json
+
+    {
+        "ids": [
+        "1","2"
+        ]
+    }
+```
+```
+    # Various index
+    POST http://localhost:9200/_mget
+    Content-Type: application/json
+
+    {
+        "docs": [
+            {
+                "_id": "1",
+                "_index": "orders"
+            },
+            {
+                "_id": "khannedy",
+                "_index": "customers"
+            }
+        ]
+    }
+```
