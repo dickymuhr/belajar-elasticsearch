@@ -295,7 +295,7 @@ When we only want to update some of attribute without re-send and replace all at
 ```
 
 ## Bulk API
-Streamline Elasticsearch responses to avoid answering each request individually, especially when dealing with very large requests. This API can combine many operations at once. When one request fail in bulk, it won't continue. Please also note that each body require newline at the end.
+Streamline Elasticsearch responses to avoid answering each request individually, especially when dealing with very large requests. This API can combine many operations at once. When one request fail in bulk, it won't continue. Please also note that each action/body require newline at the end.
 ```
     ### Bulk documents
     POST http://localhost:9200/_bulk
@@ -311,4 +311,143 @@ Streamline Elasticsearch responses to avoid answering each request individually,
     { "name" : "Spammer", "register_at" : "2023-01-01 00:00:00" }
     { "delete" : { "_index" : "customers", "_id" : "spammer" } }
 
+```
+
+## Alias
+In ElasticSearch, we cannot alter column table like many other database. So when there are schema changes, usually we create new index. Alias will help client so they not confuse when we change the index name.
+```
+    POST http://localhost:9200/_aliases
+    Content-Type: application/json
+
+    {
+        "actions": [
+            {
+                "add": {
+                    "index": "customers",
+                    "alias": "customer"
+                }
+            }
+        ]
+    }
+
+```
+
+## Reindex API
+To move data from index to other index. Usually used when new index is created then we should move the data from previous index. Don't forget to change the alias to new index.
+```
+    POST http://localhost:9200/_reindex
+    Content-Type: application/json
+
+    {
+        "source": {
+            "index": "orders"
+        },
+        "dest": {
+            "index": "orders_v2"
+        }
+    }
+```
+
+## Source Field
+Beside being stored in Lucene Document, JSON that we have sent is saved in `_source` field originally. Thats why the size of data might be doubled because ElasticSearch save the data in both Lucene Document and in Source Field.
+```json
+    {
+    "_index": "customers",
+    "_id": "khannedy",
+    "_version": 1,
+    "_seq_no": 0,
+    "_primary_term": 3,
+    "found": true,
+    "_source": {
+        "name": "Eko Kurniawan Khannedy",
+        "register_at": "2023-01-01 00:00:00"
+    }
+    }
+```
+
+## Select Field
+Feature to include (like SQL SELECT) or exclude field in `_source`.
+```
+    GET http://localhost:9200/order/_doc/1?_source_includes=total,customer_id
+```
+```
+    POST http://localhost:9200/products/_search?_source_excludes=price
+```
+
+## Explicit Mapping
+Define index schema manually. Its okay to define schema and using dynamic mapping together.
+```
+    PUT http://localhost:9200/customers_v2/_mapping
+    Content-Type: application/json
+
+    {
+        "numeric_detection": true,
+        "date_detection": true,
+        "dynamic_date_formats": [
+            "yyyy-MM-dd HH:mm:ss",
+            "yyyy-MM-dd",
+            "yyyy/MM/dd HH : mm:ss",
+            "yyyy/MM/dd"
+        ],
+        "properties": {
+            "username": {
+                "type": "keyword"
+                },
+        }
+    }
+```
+
+## Object Field
+Defined in schema using type properties, then make nested attribute. Existing schema can be updated using `PUT`.
+```
+    PUT http://localhost:9200/customers_v2/_mapping
+    Content-Type: application/json
+    {
+        "properties": {
+            "address": {
+                "properties": {
+                    "street": {
+                        "type": "text" 
+                    },
+                    "city": {
+                        "type": "text" 
+                    },
+                    "province": {
+                        "type": "text"
+                    },
+                    "country": {
+                        "type": "text"
+                    },
+                    "zip_code": {
+                        "type": "keyword"
+                    }
+                }
+            }
+        }
+    }
+```
+
+## Array Field
+As lucene document save data as array, defining array in schema is just like normal field.
+```
+    PUT http://localhost:9200/customers_v2/_mapping
+    Content-Type: application/json
+
+    {
+        "properties": {
+            "hobbies": {
+                "type":"text"
+            },
+            "banks": {
+                "properties": {
+                    "name": {
+                        "type": "text"
+                    },
+                    "account_number": {
+                        "type": "keyword"
+                    }
+                }
+            }
+        }
+    }
 ```

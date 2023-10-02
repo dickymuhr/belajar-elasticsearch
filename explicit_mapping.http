@@ -1,0 +1,73 @@
+### Create index customers_v2
+PUT http://localhost:9200/customers_v2
+
+### Update mapping customers_v2
+PUT http://localhost:9200/customers_v2/_mapping
+Content-Type: application/json
+
+{
+    "numeric_detection": true,
+    "date_detection": true,
+    "dynamic_date_formats": [
+        "yyyy-MM-dd HH:mm:ss",
+        "yyyy-MM-dd",
+        "yyyy/MM/dd HH : mm:ss",
+        "yyyy/MM/dd"
+    ],
+    "properties": {
+        "username": {
+            "type": "keyword"
+        },
+        "first_name":{
+            "type": "text"
+        },
+        "last_name": {
+            "type":"text"
+        },
+        "email":{
+            "type":"keyword"
+        },
+        "gender": {
+            "type":"keyword"
+        },
+        "birth_date": {
+            "type":"date",
+            "format":"yyyy-MM-dd"
+        }
+
+    }
+}
+
+### Create customer alias
+POST http://localhost:9200/_aliases
+Content-Type: application/json
+
+{
+    "actions": [
+    {
+        "remove": {
+            "index": "customers",
+            "alias": "customer"
+        }
+    },
+    {
+        "add": {
+            "index": "customers_v2",
+            "alias": "customer"
+            }
+        }
+    ]
+}
+
+### get all aliases
+GET http://localhost:9200/_aliases
+
+### Bulk insert
+POST http://localhost:9200/_bulk
+Content-Type: application/json
+
+< customers.json
+
+
+### Search customer
+GET http://localhost:9200/customer/_search

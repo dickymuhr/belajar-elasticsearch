@@ -1,0 +1,40 @@
+### Update mapping customers_v2
+PUT http://localhost:9200/customers_v2/_mapping
+Content-Type: application/json
+
+{
+    "properties": {
+        "address": {
+            "properties": {
+                "street": {
+                    "type": "text" 
+                },
+                "city": {
+                    "type": "text" 
+                },
+                "province": {
+                    "type": "text"
+                },
+                "country": {
+                    "type": "text"
+                },
+                "zip_code": {
+                    "type": "keyword"
+                }
+            }
+        }
+    }
+}
+
+
+### Get updated mapping
+GET http://localhost:9200/customers_v2/_mapping
+
+### Bulk insert customers with addresses
+POST http://localhost:9200/_bulk
+Content-Type: application/json
+
+< customers-with-addresses.json
+
+### Search customer
+GET http://localhost:9200/customer/_search
