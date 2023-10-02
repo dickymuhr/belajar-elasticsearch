@@ -1,0 +1,16 @@
+POST http://localhost:9200/customers/_search
+
+### Bulk documents
+POST http://localhost:9200/_bulk
+Content-Type: application/json
+
+< bulk.json
+
+### Get document joko
+GET http://localhost:9200/customers/_doc/joko
+### Get document budi
+GET http://localhost:9200/customers/_doc/budi
+### Get document spammer
+GET http://localhost:9200/customers/_doc/spammer
+### Get document product 1
+GET http://localhost:9200/products/_doc/1

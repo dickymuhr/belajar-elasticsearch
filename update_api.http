@@ -1,0 +1,9 @@
+### Update product
+POST http://localhost:9200/products/_update/5
+Content-Type: application/json
+
+{
+    "doc": {
+        "price": 30000000
+    }
+}

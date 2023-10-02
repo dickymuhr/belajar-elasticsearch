@@ -189,6 +189,7 @@ Adding document to index with unique id
 ```
 Upon creating the initial document in an index, the schema is also defined. Therefore, adding subsequent documents with differing data types will result in an error.
 
+It is recomended to use `GET API` before using `CREATE API` to avoid conflict when the document is already exist.
 ## Get API
 Retrieve document with specific id, with metadata
 ```
@@ -231,4 +232,83 @@ Multiget, to retrieve several document at once either from same index or various
             }
         ]
     }
+```
+
+## Search API
+When we want to get/search documents not using _id.
+```
+    POST http://localhost:9200/products/_search
+```
+Pagination, helping search document to determine document offset and limit. Default offset is 0 and limit is 10.
+```
+    POST http://localhost:9200/products/_search?size=1&from=0
+```
+Sorting, if we want sort in multiply field, use comma as delimiter
+```
+    POST http://localhost:9200/products/_search?sort=price:asc
+```
+
+## Index API
+Simmiliar to the `CREATE API` but has replace behavior when document `_id` exist. When replaced, document will increase its `_version`
+```
+    POST http://localhost:9200/products/_doc/3
+    Content-Type: application/json
+
+    {
+        "name": "Pop Mie Rasa Bakso",
+        "price": 2500
+    }
+```
+```json
+    {
+        "_index": "products",
+        "_id": "3",
+        "_version": 2,
+        "result": "updated",
+        "_shards": {
+            "total": 2,
+            "successful": 1,
+            "failed": 0
+        },
+        "_seq_no": 5,
+        "_primary_term": 4
+    }
+```
+
+## Update API
+When we only want to update some of attribute without re-send and replace all attribute, this also usefull to avoid deleting another attribute when sending document with same `_id` with only some attribute. This will also increase document `_version`.
+
+```
+    POST http://localhost:9200/products/_update/5
+    Content-Type: application/json
+
+    {
+        "doc": {
+        "price": 30000000
+    }
+    }
+```
+
+## Delete API
+```
+    DELETE http://localhost:9200/customers/_doc/spammer
+```
+
+## Bulk API
+Streamline Elasticsearch responses to avoid answering each request individually, especially when dealing with very large requests. This API can combine many operations at once. When one request fail in bulk, it won't continue. Please also note that each body require newline at the end.
+```
+    ### Bulk documents
+    POST http://localhost:9200/_bulk
+    Content-Type: application/json
+
+    { "create" : { "_index" : "customers", "_id" : "joko" } }
+    { "name" : "Joko Morro", "register_at" : "2023-01-01 00:00:00" }
+    { "index" : { "_index" : "customers", "_id" : "budi" } }
+    { "name" : "Budi Nugraha", "register_at" : "2023-01-01 00:00:00" }
+    { "update" : {"_index" : "products", "_id" : "1"} }
+    { "doc" : {"price" : 2500} }
+    { "create" : { "_index" : "customers", "_id" : "spammer" } }
+    { "name" : "Spammer", "register_at" : "2023-01-01 00:00:00" }
+    { "delete" : { "_index" : "customers", "_id" : "spammer" } }
+
 ```
