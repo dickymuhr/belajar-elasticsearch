@@ -1,0 +1,26 @@
+### BOOST SCORE
+
+POST http://localhost:9200/customer/_search
+Content-Type: application/json
+
+{
+    "query": {
+        "bool": {
+            "should": [
+                {
+                    "term": {
+                        "banks.name": "bca"
+                    }
+                },
+                {
+                    "term": {
+                        "banks.name": {
+                            "value": "bni",
+                            "boost": 2
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}
