@@ -1,0 +1,164 @@
+### Search Customer Where Hobbies = 'gaming' AND Banks Name = 'bca digital'
+
+POST http://localhost:9200/customer/_search
+Content-Type: application/json
+
+{
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "term": {
+                        "hobbies": "gaming"
+                    }
+                },
+                {
+                    "match": {
+                        "banks.name": {
+                            "query" : "bca digital",
+                            "operator": "AND"
+                        }
+                    }
+                }    
+            ]
+        }
+    }
+}
+
+### Search Customer Where Hobbies = 'gaming' AND Banks Name = 'bca digital'
+
+POST http://localhost:9200/customer/_search
+Content-Type: application/json
+
+{
+    "query": {
+        "bool": {
+            "filter": [
+                {
+                    "term": {
+                        "hobbies": "gaming"
+                    }
+                },
+                {
+                    "match": {
+                        "banks.name": {
+                            "query" : "bca digital",
+                            "operator": "AND"
+                        }
+                    }
+                }    
+            ]
+        }
+    }
+}
+
+
+### Search Customer Where Hobbies != 'gaming' AND Banks Name != 'bca digital'
+### Score will be all zero
+POST http://localhost:9200/customer/_search
+Content-Type: application/json
+
+{
+    "query": {
+        "bool": {
+            "must_not": [
+                {
+                    "term": {
+                        "hobbies": "gaming"
+                    }
+                },
+                {
+                    "match": {
+                        "banks.name": {
+                            "query" : "bca digital",
+                            "operator": "OR"
+                        }
+                    }
+                }    
+            ]
+        }
+    }
+}
+
+### Search Customer WhereBanks Name = 'bca' OR Banks Name = 'bni'
+### Score will occur
+POST http://localhost:9200/customer/_search
+Content-Type: application/json
+
+{
+    "query": {
+        "bool": {
+            "should": [
+                {
+                    "term": {
+                        "banks.name": "bca"
+                    }
+                },
+                {
+                    "term": {
+                        "banks.name": "bni"
+                    }
+                }    
+            ]
+        }
+    }
+}
+
+### Combining
+POST http://localhost:9200/customer/_search
+Content-Type: application/json
+
+{
+    "query": {
+        "bool": {
+            "must": [],
+            "filter":[],
+            "must_not": [],
+            "should": [
+                {
+                    "term": {
+                        "banks.name": "bca"
+                    }
+                },
+                {
+                    "term": {
+                        "banks.name": "bni"
+                    }
+                }    
+            ]
+        }
+    }
+}
+
+
+### Setting Minimum SHould Match
+### search customer where hobbies = 'gaming' and (banks.name = 'bca' or banks.name = 'bni')
+POST http://localhost:9200/customer/_search
+Content-Type: application/json
+
+{
+  "query": {
+    "bool": {
+        "must": [
+            {
+            "term": {
+                "hobbies": "gaming"
+            }
+            }
+        ],
+        "should": [
+            {
+            "term": {
+                "banks.name": "bca"
+            }
+            },
+            {
+            "term": {
+                "banks.name": "bni"
+            }
+            }
+        ],
+        "minimum_should_match": 1
+    }
+  }
+}

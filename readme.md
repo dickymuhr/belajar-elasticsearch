@@ -493,6 +493,7 @@ Kind of query to match exact value, like username, product id, price, etc. Not s
         },
     }
 ```
+If we want to query text using `term` we should act like we have standard analyize the text that we query, like lowercasing and remove all symbols, because the text is already saved in lucene document like that, this approach will 'exact match' the text.
 ## Match Query
 Similiar as term query but using  `standard analyzer` matching the data type, such as text.
 ```
@@ -549,6 +550,82 @@ Just like `IN` query in SQL, and it is similiar to `Term Query`, only matching e
 ```
 
 ## Boolean Query
+Query to support multiple field condition
+
+| Occur            | Description                                   |
+|------------------|------------------------------------------------------------|
+| must             | Query must appear in the search results and contribute to the score. |
+| filter           | Query must appear in the search results but does not contribute to the score. |
+| must_not         | Query must not appear in the search results.                |
+| should           | Query may or may not appear in the search results.           |
+
+`must` and `filter` is jut like `AND` and `should` is just like `OR`.
+Score contribute to the result relevance. If we prefer sorting manually, `filter` is a good choice.
+
+
+
+```
+    ### Search Customer Where Hobbies = 'Gaming' AND Banks Name = 'BCA'
+    POST http://localhost:9200/customer/_search
+    Content-Type: application/json
+
+    {
+        "query": {
+            "bool": {
+                "filter": [
+                    {
+                        "term": {
+                            "hobbies": "gaming"
+                        }
+                    },
+                    {
+                        "match": {
+                            "banks.name": {
+                                "query" : "bca digital",
+                                "operator": "AND"
+                            }
+                        }
+                    }    
+                ]
+            }
+        }
+    }
+```
+
+The boolean can be combined under `bool` object. There are *minimum should match* rule when using `should`, when we only use `should` the *msm* is 1 (one), but when using with other boolean it becomes 0 (zero). But we can modify this
+
+```
+    POST http://localhost:9200/customer/_search
+    Content-Type: application/json
+
+    {
+    "query": {
+        "bool": {
+            "must": [
+                {
+                "term": {
+                    "hobbies": "gaming"
+                }
+                }
+            ],
+            "should": [
+                {
+                "term": {
+                    "banks.name": "bca"
+                }
+                },
+                {
+                "term": {
+                    "banks.name": "bni"
+                }
+                }
+            ],
+            "minimum_should_match": 1
+        }
+    }
+    }
+```
+Query above will resulting all document that has `hobbies = gaming` with `banks.name = bca` or `banks.name = bni`. If we not set the *msn*, the result will also return document that has `hobbies = gaming` only, beside that has `banks.name: bca` or `banks.name = bni`, this because the *msn* is set to be zero by default.
 ## Another Query
 ## Search After
 
