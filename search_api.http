@@ -1,6 +1,25 @@
 ### Search products
 POST http://localhost:9200/products/_search
 
+### same as match all, with additional requesy body
+POST http://localhost:9200/customer/_search
+Content-Type: application/json
+
+{
+    "query":{
+        "match_all":{}
+    },
+    "size": 5,
+    "from": 0,
+    "sort":[
+        {
+            "username" : {
+                "order":"desc"
+            }
+        }
+    ]
+}
+
 ### Search all products from all index
 POST http://localhost:9200/_search
 

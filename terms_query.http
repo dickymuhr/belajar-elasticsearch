@@ -1,0 +1,15 @@
+### search customer where username IN (.., ..,..)
+POST http://localhost:9200/customer/_search
+Content-Type: application/json
+
+{
+    "query": {
+        "terms": {
+            "username": [
+                "username1",
+                "username2",
+                "username3"
+            ]
+        }
+    }
+}

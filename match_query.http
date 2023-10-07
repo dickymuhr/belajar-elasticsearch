@@ -1,0 +1,72 @@
+### Match Query
+POST http://localhost:9200/customer/_search
+Content-Type: application/json
+
+{
+    "query":{
+        "match":{
+            "banks.name" : "BCA"
+        }
+    },
+    "size": 5,
+    "from": 0,
+    "sort":[
+        {
+            "username" : {
+                "order":"desc"
+            }
+        }
+    ]
+}
+
+### the query will match the "bca" from lucene doc
+### banks.name = "BCA" => banks.name = ["bca"]
+### banks.name = "BCA Digital" => banks.name = ["bca", "digital"]
+
+### Match Query with Operator
+### "banks.name" : "BCA DIGITAL" => "bca" OR "digital" by default
+POST http://localhost:9200/customer/_search
+Content-Type: application/json
+
+{
+    "query":{
+        "match":{
+            "banks.name" : "BCA DIGITAL"
+        }
+    },
+    "size": 5,
+    "from": 0,
+    "sort":[
+        {
+            "username" : {
+                "order":"desc"
+            }
+        }
+    ]
+}
+
+### AND OPERATOR
+POST http://localhost:9200/customer/_search
+Content-Type: application/json
+
+{
+    "query":{
+        "match":{
+            "banks.name" : {
+                "query": "BCA DIGITAL",
+                "operator": "AND"
+            }
+        }
+    },
+    "size": 5,
+    "from": 0,
+    "sort":[
+        {
+            "username" : {
+                "order":"desc"
+            }
+        }
+    ]
+}
+
+

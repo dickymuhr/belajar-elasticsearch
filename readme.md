@@ -430,6 +430,28 @@ Sorting, if we want sort in multiply field, use comma as delimiter
 ```
     POST http://localhost:9200/products/_search?sort=price:asc
 ```
+Without specifying body, `Search API` behave like using `Match All`. It will get all data in index.
+Paging and Sorting also can be added using request body.
+```
+    POST http://localhost:9200/products/_search
+    Content-Type: application/json
+
+    {
+        "query":{
+            "match_all":{}
+        },
+        "size": 10,
+        "from": 10,
+        "sort":[
+            {
+                "username" : {
+                    "order":"desc"
+                }
+            }
+        ]
+    }
+```
+
 
 ## Source Field
 Beside being stored in Lucene Document, JSON that we have sent is saved in `_source` field originally. Thats why the size of data might be doubled because ElasticSearch save the data in both Lucene Document and in Source Field.
@@ -458,8 +480,74 @@ Feature to include (like SQL SELECT) or exclude field in `_source`.
 ```
 
 ## Term Query
+Kind of query to match exact value, like username, product id, price, etc. Not suitable for text, because it has text analysis that make the text data inconsistent.
+```
+    POST http://localhost:9200/customer/_search
+    Content-Type: application/json
+
+    {
+        "query":{
+            "term":{
+                "gender" : "Female"
+            }
+        },
+    }
+```
 ## Match Query
+Similiar as term query but using  `standard analyzer` matching the data type, such as text.
+```
+    ### Match Query
+    POST http://localhost:9200/customer/_search
+    Content-Type: application/json
+
+    {
+        "query":{
+            "match":{
+                "banks.name" : "BCA"
+            }
+        },
+    }
+```
+This will match "BCA" and "BCA Digital" document, banks.name is text attribute.
+
+We also can use `Operator`. Default operator is `OR`, so when we match text "BCA DIGITAL" it will search "bca" OR "digital" in index. To modify operator:
+```
+    ### Match Query
+    POST http://localhost:9200/customer/_search
+    Content-Type: application/json
+
+    {
+        "query":{
+            "match":{
+                "banks.name" : {
+                    "query": "bca digital",
+                    "operator": "AND"
+                }
+            }
+        },
+    }
+```
+
+
 ## Terms Query
+Just like `IN` query in SQL, and it is similiar to `Term Query`, only matching exact value also not suitable for text data type.
+```
+    POST http://localhost:9200/customer/_search
+    Content-Type: application/json
+
+    {
+        "query": {
+            "terms": {
+                "username": [
+                    "username1",
+                    "username2",
+                    "username3"
+                ]
+            }
+        }
+    }
+```
+
 ## Boolean Query
 ## Another Query
 ## Search After

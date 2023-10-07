@@ -1,0 +1,20 @@
+### select * from customer where gender = 'Female' limit 10 offset 0 order by username desc
+POST http://localhost:9200/customer/_search
+Content-Type: application/json
+
+{
+    "query":{
+        "term":{
+            "gender" : "Female"
+        }
+    },
+    "size": 5,
+    "from": 0,
+    "sort":[
+        {
+            "username" : {
+                "order":"desc"
+            }
+        }
+    ]
+}
