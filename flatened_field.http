@@ -1,0 +1,84 @@
+### update mapping for customer
+PUT http://localhost:9200/customer/_mapping
+Content-Type: application/json
+
+{
+    "properties": {
+        "labels": {
+            "type": "flattened"
+        }
+    }
+}
+### get customer mapping
+GET http://localhost:9200/customer/_mapping
+
+### update document customer username1
+POST http://localhost:9200/customer/_update/username1
+Content-Type: application/json
+
+{
+    "doc": {
+        "labels": {
+            "priority": "vip",
+            "discount": "10% discount",
+            "complaint": "always complaint"
+        }
+    }
+}
+
+### update document customer username2
+POST http://localhost:9200/customer/_update/username2
+Content-Type: application/json
+
+{
+    "doc": {
+        "labels": {
+            "priority": "regular",
+            "verified": "unverified",
+            "buy": "never buy"
+        }
+    }
+}
+### GET
+GET http://localhost:9200/customer/_doc/username1
+### GET
+GET http://localhost:9200/customer/_doc/username2
+
+
+### search vip customer
+POST http://localhost:9200/customer/_search
+Content-Type: application/json
+
+{
+    "query" : {
+        "term" : {
+            "labels": "vip"
+        }
+    }
+}
+
+
+### Search VIP and Regular Customer
+
+POST http://localhost:9200/customer/_search
+Content-Type: application/json
+
+{
+    "query": {
+        "bool": {
+            "should": [
+                {
+                    "term": {
+                        "labels.priority": "vip"
+                    }
+                },
+                {
+                    "term": {
+                        "labels.priority": "regular"
+                    }
+                }
+            ]
+        }
+    }
+}
+

@@ -561,7 +561,7 @@ Query to support multiple field condition
 
 `must` and `filter` is jut like `AND` and `should` is just like `OR`.
 Score contribute to the result relevance. If we prefer sorting manually, `filter` is a good choice.
-
+`must` is more computational expensive than `filter` because it calculate the relevance score.
 
 
 ```
@@ -627,12 +627,126 @@ The boolean can be combined under `bool` object. There are *minimum should match
 ```
 Query above will resulting all document that has `hobbies = gaming` with `banks.name = bca` or `banks.name = bni`. If we not set the *msn*, the result will also return document that has `hobbies = gaming` only, beside that has `banks.name: bca` or `banks.name = bni`, this because the *msn* is set to be zero by default.
 ## Another Query
+To be read: range, wildcard, regexp, geo search, exist, etc. 
+- Elasticsearch Query DSL (Domain Specific Language)
 ## Search After
 
 # Advanced Indexing Features
 ## Score
+By default, query result will be sorted using score, this is a metric that measure relevance of document to the request query. Score calculated using BM25 algorithm.
+
+We can know where the score come up with `Explain API
+```
+    POST http://localhost:9200/customer/_explain/username126
+    Content-Type: application/json
+
+    {
+    "query": {
+        // query
+    }
+    }
+```
 ## Boost Score
+Is a weight assigned to each query that determine the final score, the default boost is 1. We can modify it
+```
+    POST http://localhost:9200/customer/_search
+    Content-Type: application/json
+
+    {
+        "query": {
+            "bool": {
+                "should": [
+                    {
+                        "term": {
+                            "banks.name": "bca"
+                        }
+                    },
+                    {
+                        "term": {
+                            "banks.name": {
+                                "value": "bni",
+                                "boost": 2
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
+```
 ## Flattened Field
+Is a Elasticsearch feature, suitable for data type that has dynamic field so we are not defining many mapping. Flatened field saving all the value from each key as `keyword` type in a flat (usual array) field in lucene document.
+```
+    PUT http://localhost:9200/customer/_mapping
+    Content-Type: application/json
+
+    {
+        "properties": {
+            "labels": {
+                "type": "flattened"
+            }
+        }
+    }
+``` 
+Example of dynamic field, this key-value inside `labels` can be any data type
+```
+    POST http://localhost:9200/customer/_update/username1
+    Content-Type: application/json
+
+    {
+        "doc": {
+            "labels": {
+                "priority": "vip",
+                "discount": "10% discount",
+                "complaint": "always complaint",
+                "priority": 1
+            }
+        }
+    }
+```
+Flatened field save nested field differ from embbeded document, it flatten the nested field with only its values.
+```
+### in lucene.doc
+### labels : ["vip","10% discount", "always complaint", "1"] 
+```
+So we can search it like normal term
+```
+    POST http://localhost:9200/customer/_search
+    Content-Type: application/json
+
+    {
+        "query" : {
+            "term" : {
+                "labels": "vip"
+            }
+        }
+    }
+```
+But we can also search by the key (nested object) like this
+```
+    POST http://localhost:9200/customer/_search
+    Content-Type: application/json
+
+    {
+        "query": {
+            "bool": {
+                "should": [
+                    {
+                        "term": {
+                            "labels.priority": "vip"
+                        }
+                    },
+                    {
+                        "term": {
+                            "labels.priority": "regular"
+                        }
+                    }
+                ]
+            }
+        }
+    }
+```
+A flattened field is a flexible field that behaves similarly to an embedded document when querying it. The trade-off is that the data type becomes exclusively `keyword`.
 ## Nested Field
 ## Multi Fields
 
