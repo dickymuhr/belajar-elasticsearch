@@ -494,6 +494,16 @@ Kind of query to match exact value, like username, product id, price, etc. Not s
     }
 ```
 If we want to query text using `term` we should act like we have standard analyize the text that we query, like lowercasing and remove all symbols, because the text is already saved in lucene document like that, this approach will 'exact match' the text.
+
+### Note
+Text in lucene document will be saved with tokenization by standard analyzer. Example:
+```
+"Hello this is text!" -> ["hello", "this","is","text"]
+```
+If the data type is keyword and not text it will retain raw data
+```
+"Hello this is text!" -> ["Hello this is text!"]
+```
 ## Match Query
 Similiar as term query but using  `standard analyzer` matching the data type, such as text.
 ```
@@ -704,7 +714,7 @@ Example of dynamic field, this key-value inside `labels` can be any data type
         }
     }
 ```
-Flatened field save nested field differ from embbeded document, it flatten the nested field with only its values.
+Flatened field save nested attribute differ from embbeded document, it flatten the nested attribute with only its values.
 ```
 ### in lucene.doc
 ### labels : ["vip","10% discount", "always complaint", "1"] 
@@ -748,8 +758,115 @@ But we can also search by the key (nested object) like this
 ```
 A flattened field is a flexible field that behaves similarly to an embedded document when querying it. The trade-off is that the data type becomes exclusively `keyword`.
 ## Nested Field
-## Multi Fields
+A special data type to store object in an array as independent document. A query that applied to nested field is considered a very expensive operation.
+```
+    PUT http://localhost:9200/parents/_mapping
+    Content-Type: application/json
 
+    {
+        "properties": {
+            "first_name": {
+                "type": "text"
+            },
+            "last_name": {
+                "type": "text"
+            },
+            "children": {
+                "type": "nested",
+                "properties": {
+                    "first_name": {
+                        "type": "text"
+                    },
+                    "last_name": {
+                        "type": "text"
+                    }
+                }
+            }
+        }
+    }
+```
+To query, we should use nested query
+```
+    POST http://localhost:9200/parents/_search
+    Content-Type: application/json
+
+    {
+    "query": {
+        "nested": {
+            "path" : "children",
+            "query":{
+                "bool": {
+                    "must": [
+                        {
+                            "match": {
+                                "children.first_name": "Joko"
+                            }
+                        },
+                        {
+                            "match": {
+                                "children.last_name": "Nugraha"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    }
+    }
+```
+## Multi Fields
+From one field to become several different data types. We define multi fields schema in the mapping
+```
+    PUT http://localhost:9200/categories/_mapping
+    Content-Type: application/json
+
+    {
+    "properties": {
+        "name": {
+        "type": "text",
+        "fields": {
+            "raw": {
+            "type": "keyword"
+            }
+        }
+        }
+    }
+    }
+```
+To query, access it like this
+```
+    POST http://localhost:9200/categories/_search
+    Content-Type: application/json
+
+    {
+    "query": {
+        "match": {
+        "name.raw": "Laptop Murah"
+        }
+    }
+    }
+```
+This usefull to provide another field that serve some purpose, like for sorting we should have field that has keyword data type from the original text type.
+```
+    POST http://localhost:9200/categories/_search
+    Content-Type: application/json
+
+    {
+    "query": {
+        "match": {
+        "name": "Laptop"
+        }
+    },
+    "sort": [
+        {
+        "name.raw": {
+            "order": "asc"
+        }
+        }
+    ]
+    }
+```
+From the query above, `name` is text and `name.raw` is keyword.
 # Administrative Operations
 ## Cat API
 ## Snapshot

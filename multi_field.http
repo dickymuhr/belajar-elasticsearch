@@ -1,0 +1,61 @@
+### create index category
+PUT http://localhost:9200/categories
+
+### Update Maping
+PUT http://localhost:9200/categories/_mapping
+Content-Type: application/json
+
+{
+  "properties": {
+    "name": {
+      "type": "text",
+      "fields": {
+        "raw": {
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}
+
+#### Get mapping
+GET http://localhost:9200/categories/_mapping
+
+### Insert to name, also updating name.raw
+POST http://localhost:9200/categories/_doc/1
+Content-Type: application/json
+
+{
+    "name" : "Laptop Murah"
+}
+
+### Search Category by name.raw
+POST http://localhost:9200/categories/_search
+Content-Type: application/json
+
+{
+  "query": {
+    "match": {
+      "name.raw": "Laptop Murah"
+    }
+  }
+}
+
+### Search Categories
+POST http://localhost:9200/categories/_search
+Content-Type: application/json
+
+{
+  "query": {
+    "match": {
+      "name": "Laptop"
+    }
+  },
+  "sort": [
+    {
+      "name.raw": {
+        "order": "asc"
+      }
+    }
+  ]
+}
