@@ -1,0 +1,13 @@
+### LIST CAT API
+GET http://localhost:9200/_cat/
+
+
+### Using API
+GET http://localhost:9200/_cat/indices?v
+
+###
+
+GET http://localhost:9200/_cat/aliases?v
+
+###
+GET http://localhost:9200/_cat/nodes?v

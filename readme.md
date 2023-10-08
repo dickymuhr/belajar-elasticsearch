@@ -933,5 +933,8 @@ Every document that match to the query, will be deleted.
 
 # Administrative Operations
 ## Cat API
+Cat stand for *Compact and aligneed text*, a query for see Elasticsearch information like index, shard, nodes, etc.
+
+Full documentation here https://www.elastic.co/guide/en/elasticsearch/reference/current/cat.html
 ## Snapshot
 ## Restore
