@@ -997,4 +997,48 @@ Listing the snapshot
     ### list snapshots
     GET http://localhost:9200/_cat/snapshots?v
 ```
+
+Deleting snapshot
+```
+    ### delete snapshot snapshot1
+    DELETE http://localhost:9200/_snapshot/first_backup/snapshot1
+    ### delete repository (also the snapshot inside it)
+    DELETE http://localhost:9200/_snapshot/first_backup
+```
+
 ## Restore
+Restoring backup that saved in snapshot. We can specify which index we want to restore.
+
+Before restoring snapshot, first shutdown or close the index to make the data consistent (index can't be read, insert, update, or delete), avoiding corrupt data.
+```
+    POST http://localhost:9200/categories/_close
+```
+
+Restoring
+```
+    POST http://localhost:9200/_snapshot/first_backup/snapshot1/_restore
+    Content-Type: application/json
+
+    {
+        "indices": [
+            "categories"
+        ]
+    }
+```
+
+Then open the index
+```
+    POST http://localhost:9200/categories/_open
+```
+
+Check index status (close/open)
+```
+    GET http://localhost:9200/_cat/indices?v
+```
+
+# Next Material
+- Elasticsearch Query DSL
+- Elasticsearch Text Analysis
+- Elasticsearch Geospatial
+- Elasticsearch Aggregation
+- Elasticsearch Scalability
