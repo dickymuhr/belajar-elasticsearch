@@ -451,7 +451,11 @@ Paging and Sorting also can be added using request body.
         ]
     }
 ```
-
+## Count Query
+To count total document in a index
+```
+POST http://localhost:9200/categories/_count
+```
 
 ## Source Field
 Beside being stored in Lucene Document, JSON that we have sent is saved in `_source` field originally. Thats why the size of data might be doubled because ElasticSearch save the data in both Lucene Document and in Source Field.
@@ -636,10 +640,40 @@ The boolean can be combined under `bool` object. There are *minimum should match
     }
 ```
 Query above will resulting all document that has `hobbies = gaming` with `banks.name = bca` or `banks.name = bni`. If we not set the *msn*, the result will also return document that has `hobbies = gaming` only, beside that has `banks.name: bca` or `banks.name = bni`, this because the *msn* is set to be zero by default.
+
 ## Another Query
 To be read: range, wildcard, regexp, geo search, exist, etc. 
 - Elasticsearch Query DSL (Domain Specific Language)
+
 ## Search After
+Elasticsearch limit query result only 10k document by default. This limitation can be overrided but it is not recommended because it will be more computationally expensive. This because *Deep Paging Problem*.
+
+The previous alternate to handle this is using `scroll api` but it is no longer recommended. Now `search after` is preferable.
+
+`search after` will always query documents in first page, and using last document sort index from the previous query for its offset. Of course it needs sorting.
+```
+    POST http://localhost:9200/categories/_search
+    Content-Type: application/json
+
+    {
+        "size": 100,
+        "from": 0,
+        "sort": [
+            {
+                "id": {
+                    "order": "asc"
+                }
+            }
+        ],
+        "query": {
+            "match_all": {}
+        },
+        "search_after": [
+            "10087"
+        ]
+    }
+```
+From query above, "10087" is obtained from sort field of last document from previous query. To take all documents, we just iterate the query, use previous last sort index to do next query using `search after` parameter.
 
 # Advanced Indexing Features
 ## Score

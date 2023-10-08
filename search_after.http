@@ -1,0 +1,96 @@
+### SIMULATE ERROR DEEP PAGING ERROR
+
+### INSERT DATA
+### Delete all customer
+POST http://localhost:9200/categories/_delete_by_query
+Content-Type: application/json
+
+{
+    "query":{
+        "match_all": {}
+    }
+}
+
+### Update mapping
+PUT http://localhost:9200/categories/_mapping
+Content-Type: application/json
+
+{
+    "properties": {
+        "id":{
+            "type":"keyword"
+        }
+    }
+}
+
+### Get mapping
+GET http://localhost:9200/categories/_mapping   
+
+### bulk insert
+POST http://localhost:9200/_bulk
+Content-Type: application/json
+
+< categories.json
+
+### count
+POST http://localhost:9200/categories/_count
+
+
+### Search usual
+POST http://localhost:9200/categories/_search
+
+### error search, exceed 10k limit
+POST http://localhost:9200/categories/_search
+Content-Type: application/json
+
+{
+    "size":100,
+    "from": 10000,
+    "query":{
+        "match_all": {}
+    }
+}
+
+
+### SEARCH AFTER
+### search categories
+POST http://localhost:9200/categories/_search
+Content-Type: application/json
+
+{
+    "size": 100,
+    "from": 0,
+    "sort": [
+        {
+            "id": {
+                "order": "asc"
+            }
+        }
+    ],
+    "query": {
+        "match_all": {}
+    }
+}
+
+
+### search after
+POST http://localhost:9200/categories/_search
+Content-Type: application/json
+
+{
+    "size": 100,
+    "from": 0,
+    "sort": [
+        {
+            "id": {
+                "order": "asc"
+            }
+        }
+    ],
+    "query": {
+        "match_all": {}
+    },
+    "search_after": [
+        "10087"
+    ]
+}
