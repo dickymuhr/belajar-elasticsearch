@@ -934,7 +934,67 @@ Every document that match to the query, will be deleted.
 # Administrative Operations
 ## Cat API
 Cat stand for *Compact and aligneed text*, a query for see Elasticsearch information like index, shard, nodes, etc.
+```
+    ### LIST CAT API
+    GET http://localhost:9200/_cat/
 
+    ### Using API
+    GET http://localhost:9200/_cat/indices?v
+```
 Full documentation here https://www.elastic.co/guide/en/elasticsearch/reference/current/cat.html
 ## Snapshot
+Is a backup for Elasticsearch cluster
+### Snapshot Repository
+Location where we save snapshot like AWS S3, GCP Storage, Azure Storage, or using File Storage (local)
+
+To make local repository, modify elasticsearch.yml first and restart. Dont forget to create `backup` folder in Elasticsearch folder.
+```
+    cluster.name: diccode-cluster
+    node.name: diccode-1
+    xpack.security.enabled: false
+    http.port: 9200
+    path.data: data
+    path. logs: logs
+    # lokasi repository
+    path.repo: backup
+```
+
+Make repository
+```
+    PUT http://localhost:9200/_snapshot/first_backup
+    Content-Type: application/json
+
+    {    
+        "type": "fs",
+        "settings": {
+            "location": "first_backup"
+        }
+    }
+```
+List repository
+```
+    GET http://localhost:9200/_snapshot
+```
+
+Create snapshot, if we not specify the `indices` list, it will snapshot all index
+```
+    PUT http://localhost:9200/_snapshot/first_backup/snapshot1
+    Content-Type: application/json
+
+    {
+        "indices": [],
+        "metadata": {
+            "taken_by": "dicky",
+            "taken_because": "backup before upgrading"
+        }
+    }
+```
+
+Listing the snapshot
+```
+    ### get snapshot
+    GET http://localhost:9200/_snapshot/first_backup/snapshot1
+    ### list snapshots
+    GET http://localhost:9200/_cat/snapshots?v
+```
 ## Restore
