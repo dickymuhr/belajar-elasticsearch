@@ -815,7 +815,7 @@ To query, we should use nested query
     }
 ```
 ## Multi Fields
-From one field to become several different data types. We define multi fields schema in the mapping
+From one field to become several different data types. When a field has multi field, the multi field will be automatically inserted when we insert data to the main field. We define multi fields schema in the mapping
 ```
     PUT http://localhost:9200/categories/_mapping
     Content-Type: application/json
@@ -867,6 +867,36 @@ This usefull to provide another field that serve some purpose, like for sorting 
     }
 ```
 From the query above, `name` is text and `name.raw` is keyword.
+
+## Update by Query API
+In contrast to the scenario where we have defined a schema as `multi-field`, upon data insertion into the main field, data will also be inserted into the `multi-field`. However, if we later update a field to be a multi field, the `multi-field` in existing documents will remain empty by default. `Update by Query` can handle this issue.
+
+```
+    POST http://localhost:9200/products/_update_by_query
+    Content-Type: application/json
+    {
+        "query": {
+            "match_all": {}
+        }
+    }
+```
+Query above will trigger an update to the `lucene document`, and the data from the main field will be populated into the `multi-field`. This method enables the updating of the `multi-field` without the need for manual updates or reindexing of the data.
+
+Those query will updated all document, but we also can update only the document that match the query (if we specify the query more specific).
+## Delete by Query API
+Every document that match to the query, will be deleted.
+```
+    POST http://localhost:9200/categories/_delete_by_query
+    Content-Type: application/json
+    {
+        "query": {
+            "match": {
+                "name": "salah"
+            }
+        }
+    }
+```
+
 # Administrative Operations
 ## Cat API
 ## Snapshot

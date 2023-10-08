@@ -1,0 +1,38 @@
+### update products mapping, add name.raw
+PUT http://localhost:9200/products/_mapping
+Content-Type: application/json
+
+{
+    "properties": {
+        "name": {
+            "type": "text",
+            "fields": {
+                "raw": {
+                    "type": "keyword"
+                }
+            }
+        }
+    }
+}
+
+### Searcing product raw
+POST http://localhost:9200/products/_search
+Content-Type: application/json
+
+{
+    "query":{
+        "term":{
+            "name.raw" : "Mie Sedap Soto"
+        }
+    }
+}
+
+###update all
+POST http://localhost:9200/products/_update_by_query
+Content-Type: application/json
+
+{
+    "query": {
+        "match_all": {}
+    }
+}
